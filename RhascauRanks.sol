@@ -11,6 +11,8 @@ contract RhascauRanks is ERC721, ERC721URIStorage, Ownable {
     using Strings for uint8;
 
     event RankAssigned(address _user, uint256 _tokenId);
+    event RankUpgraded(address indexed _user, uint8 _newRank);
+    event RhascauManagerChanged(address indexed _newContract);
 
     bool public isPaused = false;
     address public rhascauManagerContract;
@@ -59,10 +61,12 @@ contract RhascauRanks is ERC721, ERC721URIStorage, Ownable {
     onlyRhascauManager 
     {
         _setTokenURI(userToToken[_user], string(abi.encodePacked(baseURI,(uint8(_newRank)).toString(),baseExtension)));
+        emit RankUpgraded(_user, _newRank);
     }
 
     function changeRhascauManagerContract(address _newContract) external onlyOwner {
         rhascauManagerContract = _newContract;
+        emit RhascauManagerChanged(_newContract);
     }
 
     function getUsersTokenURI(address _user) external view returns(string memory) { 
